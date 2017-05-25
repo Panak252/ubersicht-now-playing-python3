@@ -1,27 +1,17 @@
-# Playbox for [Übersicht](http://tracesof.net/uebersicht/)
+# Now Playing for [Übersicht][uber]
+A music widget based on the [Playbox][playbox] widget by [Pe8er][pe8er] for [Übersicht][uber]. This widget shows the currently played song in either iTunes or Spotify. It shows the album artwork if it can find it and has a simple progress bar.
 
-This widget shows currently played song in either iTunes or Spotify. It has a spiffy progress bar, shows pretty artwork (external dependency: pretty artwork) and has a ton of customization options.
+This widget would not be possible without the awesome work that [Pe8er][pe8er] has done on his [Playbox][playbox] widget.
 
-## [Download Playbox](https://github.com/Pe8er/Playbox.widget/raw/master/Playbox.widget.zip)
+![Screenshot of widget](screenshot.png)
 
 # Features
-
-<img src="https://github.com/Pe8er/Playbox.widget/blob/master/screenshot.jpg" width="516" height="320">
-
-- Supports both Spotify and iTunes.
-- Shows artwork (courtesy of [last.fm](http://www.last.fm) or local artwork for iTunes songs).
+- Supports iTunes and Spotify.
+- Shows artwork (courtesy of [last.fm](http://www.last.fm)).
 - Song progress bar.
-- Three size variants.
-- 🔥 Dark and light themes.
-- 🔥 Position song metadata inside or outside the artwork.
-- 🔥 If song meta is inside the artwork, it fades out automatically. Click the artwork to show it again.
-- Easy way to toggle the widget's visibility.
-- Easy way to position the widget on the screen.
-- Spiffy fade animations all over the place.
 
 # Options
-
-Here's how you can set all the widget's options. Open `index.coffee` and look at the very top of the document:
+There are a few options you can change by editing the index.coffee file.
 
 ```coffeescript
   # Enable or disable the widget.
@@ -30,20 +20,13 @@ Here's how you can set all the widget's options. Open `index.coffee` and look at
   # Choose where the widget should sit on your screen.
   verticalPosition    : "bottom"        # top | bottom | center
   horizontalPosition    : "left"        # left | right | center
-
-  # Choose widget size.
-  widgetVariant: "large"                # large | medium | small
-
-  # Choose color theme.
-  widgetTheme: "dark"                   # dark | light
-
-  # Song metadata inside or outside? Applies to large and medium variants only.
-  metaPosition: "inside"                # inside | outside
-
-  # Stick the widget in the corner? Set to *true* if you're using it with Sidebar widget, set to *false* if you'd like to give it some breathing room and a drop shadow.
-  stickInCorner: false                  # true | false
 ```
 
-## [Download Playbox](https://github.com/Pe8er/Playbox.widget/raw/master/Playbox.widget.zip)
+# Download
 
-[See my other widgets &rarr;](https://github.com/Pe8er/Ubersicht-Widgets)
+[Download Now Playing][download]
+
+[uber]: http://tracesof.net/uebersicht
+[playbox]: http://tracesof.net/uebersicht-widgets/#Playbox
+[pe8er]: https://github.com/Pe8er
+[download]: https://github.com/dionmunk/ubersicht-now-playing/raw/master/now-playing.widget.zip
