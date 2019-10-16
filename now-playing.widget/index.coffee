@@ -6,7 +6,7 @@ options =
   verticalPosition    : "bottom"        # top | bottom | center
   horizontalPosition    : "left"        # left | right | center
 
-command: "osascript 'now-playing.widget/lib/Get Current Track.applescript'"
+command: "osascript 'now-playing.widget/lib/getMusicData.applescript'"
 refreshFrequency: '1s'
 style: """
 
@@ -75,21 +75,51 @@ else
     overflow: hidden
     white-space: nowrap
     text-overflow: ellipsis
+    float: left
+    width: 185px
 
-.track-title
+.song-year
+    font-weight: bold
+    text-transform: uppercase
+    margin-top: 3px
+    margin-bottom: 5px
+    text-align: right
+    overflow: hidden
+    white-space: nowrap
+    text-overflow: ellipsis
+    float: right
+    width: 28px
+
+.is-loved
+    display: none
+    font-weight: bold
+    text-transform: uppercase
+    margin-top: 3px
+    margin-left: 5px
+    overflow: hidden
+    white-space: nowrap
+    text-overflow: ellipsis
+    width: 10px
+
+.song-name
     font-size: 14px
     text-transform: uppercase
     margin-bottom: 5px
     overflow: hidden
     white-space: nowrap
     text-overflow: ellipsis
+    float: left
+    width: 218px
 
-.album-title
+.album-name
     font-weight: bold
     text-transform: uppercase
+    margin-right: 5px
     overflow: hidden
     white-space: nowrap
     text-overflow: ellipsis
+    float: left
+    width: 218px
 
 .bar-container
     width: 100%
@@ -112,16 +142,15 @@ options : options
 
 render: () -> """
 <div class="container">
-    <div class="album-art"></div>
+    <div class="album-art"><div class="is-loved">&hearts;</div></div>
     <div class="track-info">
-        <div class="artist-name"></div>
-        <div class="track-title">title</div>
-        <div class="album-title"></div>
+        <div class="artist-name"></div><div class="song-year"></div>
+        <div class="song-name"></div>
+        <div class="album-name"></div>
         <div class="bar-container">
             <div class="bar bar-progress"></div>
         </div>
-        <div class="console">
-        </div>
+        <div class="console"></div>
     </div>
 </div>
 """
@@ -131,30 +160,58 @@ update: (output, domEl) ->
 
   div = $(domEl)
 
+  # if widget enabled
   if @options.widgetEnable
 
+    # if not output then hide the widget
     if !output
       div.animate({opacity: 0}, 250, 'swing').hide(1)
+
+    # if output then show
     else
+      # gather script values
       values = output.slice(0,-1).split(" @ ")
       div.find('.artist-name').html(values[0])
-      div.find('.track-title').html(values[1])
-      div.find('.album-title').html(values[2])
-      tDuration = values[3]
-      tPosition = values[4]
-      tArtwork = values[5]
-      songChanged = values[6]
-      currArt = "/" + div.find('.album-art').css('background-image').split('/').slice(-3).join().replace(/\,/g, '/').slice(0,-1)
-      tWidth = 218
-      tCurrent = (tPosition / tDuration) * tWidth
-      div.find('.bar-progress').css width: tCurrent
-      div.show(1).animate({opacity: 1}, 250, 'swing')
+      div.find('.song-name').html(values[1])
+      div.find('.album-name').html(values[2])
+      div.find('.song-year').html(values[3])
+      songDuration = values[4]
+      currentPosition = values[5]
+      coverURL = values[6]
+      songChanged = values[7]
+      isLoved = values[8]
 
-      if currArt isnt tArtwork and tArtwork isnt 'NA'
+      # set progress bar width
+      barWidth = 218
+      # figure out current position
+      songProgress = (currentPosition / songDuration) * barWidth
+      # set progress bar width
+      div.find('.bar-progress').css width: songProgress
+
+      # get current cover art
+      currentCoverURL = "/" + div.find('.album-art').css('background-image').split('/').slice(-3).join().replace(/\,/g, '/').slice(0,-1)
+
+      # if the art changed then update it
+      if currentCoverURL isnt coverURL and coverURL isnt 'NA' and coverURL isnt ''
         artwork = div.find('.album-art')
-        artwork.css('background-image', 'url('+tArtwork+')')
-      else if tArtwork is 'NA'
+        artwork.css('background-image', 'url('+coverURL+')')
+
+      # if no cover art then show default image
+      # else if coverURL is 'NA'
+      else
         artwork = div.find('.album-art')
         artwork.css('background-image', 'url(now-playing.widget/lib/default.png)')
+
+      # if song isLoved then show heart
+      if isLoved == 'true'
+        div.find('.is-loved').css('display', 'block')
+      # else hide heart
+      else
+        div.find('.is-loved').css('display', 'none')
+
+      # show the widget
+      div.show(1).animate({opacity: 1}, 250, 'swing')
+
+  # hide widget if disabled
   else
     div.hide()

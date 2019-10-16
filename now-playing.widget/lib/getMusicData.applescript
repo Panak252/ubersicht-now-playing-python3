@@ -1,6 +1,6 @@
-global artistName, songName, albumName, songRating, songDuration, currentPosition, musicapp, apiKey, songMetaFile, mypath, currentCoverURL, isLoved
-set metaToGrab to {"artistName", "songName", "albumName", "songDuration", "currentPosition", "coverURL", "songChanged", "isLoved"}
-property enableLogging : false --- options: true | false
+global artistName, songName, albumName, songYear, songDuration, currentPosition, songRating, musicapp, apiKey, songMetaFile, mypath, currentCoverURL, isLoved
+set metaToGrab to {"artistName", "songName", "albumName", "songYear", "songDuration", "currentPosition", "coverURL", "songChanged", "isLoved"}
+property enableLogging : true --- options: true | false
 
 set apiKey to "2e8c49b69df3c1cf31aaa36b3ba1d166"
 try
@@ -15,7 +15,6 @@ end try
 
 set songMetaFile to (mypath & "songMeta.plist" as string)
 
-
 if isMusicPlaying() is true then
 	getSongMeta()
 	writeSongMeta({"currentPosition" & "##" & currentPosition})
@@ -25,15 +24,17 @@ if isMusicPlaying() is true then
 		writeSongMeta({Â
 			"artistName" & "##" & artistName, Â
 			"songName" & "##" & songName, Â
+			"albumName" & "##" & albumName, Â
+			"songYear" & "##" & songYear, Â
 			"songDuration" & "##" & songDuration, Â
 			"isLoved" & "##" & isLoved, Â
 			"songChanged" & "##" & Â
 			true})
-		if didCoverChange() is true then
+		# if didCoverChange() is true then
 			set savedCoverURL to my readSongMeta({"coverURL"})
 			set currentCoverURL to grabCover()
 			if savedCoverURL is not currentCoverURL then writeSongMeta({"coverURL" & "##" & currentCoverURL})
-		end if
+		# end if
 		writeSongMeta({"albumName" & "##" & albumName})
 	else
 		writeSongMeta({Â
@@ -51,13 +52,13 @@ spitOutput(metaToGrab) as string
 ------------------------------------------------
 
 on isMusicPlaying()
-	set apps to {"iTunes", "Spotify"}
+	set apps to {"Music", "Spotify"}
 	set answer to false
 	repeat with anApp in apps
 		tell application "System Events" to set isRunning to (name of processes) contains anApp
 		if isRunning is true then
 			try
-				using terms from application "iTunes"
+				using terms from application "Music"
 					tell application anApp
 						if player state is playing then
 							set musicapp to (anApp as string)
@@ -76,11 +77,11 @@ end isMusicPlaying
 on getSongMeta()
 	try
 		set musicAppReference to a reference to application musicapp
-		using terms from application "iTunes"
+		using terms from application "Music"
 			try
 				tell musicAppReference
-					set {artistName, songName, albumName, songDuration} to {artist, name, album, duration} of current track
-					if musicapp is "iTunes" then
+					set {artistName, songName, albumName, songDuration, songYear} to {artist, name, album, duration, year} of current track
+					if musicapp is "Music" then
 						set isLoved to loved of current track as string
 					else if musicapp is "Spotify" then
 						set isLoved to "false"
@@ -102,8 +103,8 @@ end getSongMeta
 on didSongChange()
 	set answer to false
 	try
-		set currentSongMeta to artistName & songName
-		set savedSongMeta to (readSongMeta({"artistName"}) & readSongMeta({"songName"}) as string)
+		set currentSongMeta to artistName & songName & albumName & songYear
+		set savedSongMeta to (readSongMeta({"artistName"}) & readSongMeta({"songName"}) & readSongMeta({"albumName"}) & readSongMeta({"songYear"}) as string)
 		if currentSongMeta is not savedSongMeta then set answer to true
 	on error e
 		my logEvent(e)
@@ -114,8 +115,8 @@ end didSongChange
 on didCoverChange()
 	set answer to false
 	try
-		set currentSongMeta to artistName & albumName
-		set savedSongMeta to (readSongMeta({"artistName"}) & readSongMeta({"albumName"}) as string)
+		set currentSongMeta to artistName & songName & albumName & songYear
+		set savedSongMeta to (readSongMeta({"artistName"}) & readSongMeta({"songName"}) & readSongMeta({"albumName"}) & readSongMeta({"songYear"}) as string)
 		if currentSongMeta is not savedSongMeta then set answer to true
 		if readSongMeta({"coverURL"}) is "NA" then set answer to true
 	on error e
@@ -126,8 +127,8 @@ end didCoverChange
 
 on grabCover()
 	try
-		if musicapp is "iTunes" then
-			tell application "iTunes" to tell current track
+		if musicapp is "Music" then
+			tell application "Music" to tell current track
 				if exists (every artwork) then
 					my getLocaliTunesArt()
 				else
@@ -146,7 +147,7 @@ end grabCover
 
 on getLocaliTunesArt()
 	do shell script "rm -rf " & readSongMeta({"oldFilename"}) -- delete old artwork
-	tell application "iTunes" to tell artwork 1 of current track -- get the raw bytes of the artwork into a var
+	tell application "Music" to tell artwork 1 of current track -- get the raw bytes of the artwork into a var
 		set srcBytes to raw data
 		if format is Çclass PNG È then -- figure out the proper file extension
 			set ext to ".png"
