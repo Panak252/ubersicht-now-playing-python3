@@ -1,16 +1,13 @@
-# Now Playing for [Übersicht][uber]
-A music widget based on the [Playbox][playbox] widget by [Pe8er][pe8er] for [Übersicht][uber]. This widget shows the currently played song in either iTunes or Spotify. It shows the album artwork if it can find it and has a simple progress bar.
+# Now Playing
 
-This widget would not be possible without the awesome work that [Pe8er][pe8er] has done on his [Playbox][playbox] widget.
+A simple music widget for for [Übersicht](http://tracesof.net/uebersicht). Based on the [Playbox](http://tracesof.net/uebersicht-widgets/#Playbox)] widget by [Pe8er](https://github.com/Pe8er) This widget shows the current playing song in either iTunes or Spotify. It shows the album artwork if it can find it and has a simple progress bar.
 
-![Screenshot of widget](screenshot.png)
+## Screenshot
 
-# Features
-- Supports iTunes and Spotify.
-- Shows artwork (courtesy of [last.fm](http://www.last.fm)).
-- Song progress bar.
+![Screenshot](screenshots/screenshot.png)
 
-# Options
+## Options
+
 There are a few options you can change by editing the index.coffee file.
 
 ```coffeescript
@@ -22,11 +19,12 @@ There are a few options you can change by editing the index.coffee file.
   horizontalPosition    : "left"        # left | right | center
 ```
 
-# Download
+## Installation
 
-[Download Now Playing][download]
+- Download the [repository](https://github.com/dionmunk/ubersicht-now-playing/archive/master.zip) and extract it.
+- Place the `now-playing.widget` folder in your Übersicht extension folder.
+- Refresh Übersicht.
 
-[uber]: http://tracesof.net/uebersicht
-[playbox]: http://tracesof.net/uebersicht-widgets/#Playbox
-[pe8er]: https://github.com/Pe8er
-[download]: https://github.com/dionmunk/ubersicht-now-playing/raw/master/now-playing.widget.zip
+## License
+
+This work is licensed under a [Creative Commons Attribution-NonCommercial 4.0 International License](https://creativecommons.org/licenses/by-nc/4.0/).
