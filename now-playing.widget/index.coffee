@@ -48,9 +48,9 @@ else
     position: relative
     clear: both
     color #fff
-    background rgba(#000, .5)
+    background rgba(#000, .15)
     padding 10px
-    border-radius @borderRadius
+    border-radius 10px
 
 .album-art
     width: @infoHeight
@@ -169,6 +169,8 @@ update: (output, domEl) ->
 
     # if output then show
     else
+      console.log output
+
       # gather script values
       values = output.slice(0,-1).split(" @ ")
       div.find('.artist-name').html(values[0])
