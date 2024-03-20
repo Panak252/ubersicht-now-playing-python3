@@ -1,6 +1,6 @@
 # Now Playing
 
-A simple music widget for for [Übersicht](http://tracesof.net/uebersicht). Based on the [Playbox](http://tracesof.net/uebersicht-widgets/#Playbox) widget by [Pe8er](https://github.com/Pe8er). This widget shows the current playing song in either iTunes or Spotify. It also shows the album artwork if it can find it and has a simple progress bar.
+A simple music widget for [Übersicht](http://tracesof.net/uebersicht). Based on the [Playbox](http://tracesof.net/uebersicht-widgets/#Playbox) widget by [Pe8er](https://github.com/Pe8er). This widget shows the current playing song on either iTunes or Spotify. It also shows the album artwork if it can find it and has a simple progress bar.
 
 ## Screenshot
 
