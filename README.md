@@ -1,6 +1,6 @@
 # Now Playing
 
-A simple music widget for [Übersicht](http://tracesof.net/uebersicht). Based on the [Playbox](http://tracesof.net/uebersicht-widgets/#Playbox) widget by [Pe8er](https://github.com/Pe8er). This widget shows the current playing song on either iTunes or Spotify. It also shows the album artwork if it can find it and has a simple progress bar.
+A simple (and updated to use python3) music widget for [Übersicht](http://tracesof.net/uebersicht). Based on the [Playbox](http://tracesof.net/uebersicht-widgets/#Playbox) widget by [Pe8er](https://github.com/Pe8er). This widget shows the current playing song on either iTunes or Spotify. It also shows the album artwork if it can find it and has a simple progress bar.
 
 ## Screenshot
 
@@ -24,6 +24,8 @@ There are a few options you can change by editing the index.coffee file.
 - Download the [repository](https://github.com/dionmunk/ubersicht-now-playing/archive/master.zip) and extract it.
 - Place the `now-playing.widget` folder in your Übersicht extension folder.
 - Refresh Übersicht.
+
+make sure you have python3 installed? (using brew.sh or the official python 3 installer i suppose)
 
 ## License
 

@@ -1,219 +1,67 @@
-options =
-  # Enable or disable the widget.
-  widgetEnable : true                   # true | false
+# Uncomment this command to always show the latest comic strip
+# command: "curl --silent https://xkcd.com/221/info.0.json"
 
-  # Choose where the widget should sit on your screen.
-  verticalPosition    : "bottom"        # top | bottom | center
-  horizontalPosition    : "left"        # left | right | center
+# Use this command to load a random comic strip from the past
+command: "last=$(python3 -c 'import urllib, urllib.request, json, sys; print(json.loads(urllib.request.urlopen(\"http://xkcd.com/info.0.json\").read())[\"num\"])') && newid=$((RANDOM%$last+1)) && curl --silent https://xkcd.com/$newid/info.0.json"
 
-command: "osascript 'now-playing.widget/lib/getMusicData.applescript'"
-refreshFrequency: '1s'
+# Set the refresh frequency (milliseconds) to every hour
+refreshFrequency: 60*60*1000
+
 style: """
 
-// setup
-// --------------------------------------------------
-display: none
-font-family system, -apple-system, "Helvetica Neue"
-font-size: 10px
-margin = 10px
-position: absolute
+  widget-align = left			// Align contents left or right
+  bottom: 10px				// Position widget
+  right: 10px
+  color: #fff				// Text settings
+  font-family Helvetica Neue
+  background rgba(#000, .5)
+  padding 20px 20px 20px 20px
+  border-radius 5px
 
-// variables
-// --------------------------------------------------
-widgetWidth 300px
-borderRadius 6px
-infoHeight 72px
-infoWidth @widgetWidth - 82
-
-// screen positioning calculations
-// --------------------------------------------------
-if #{options.verticalPosition} == center
-    top 50%
-    transform translateY(-50%)
-else
-    #{options.verticalPosition} margin
-
-if #{options.horizontalPosition} == center
-    left 50%
-    transform translateX(-50%)
-else
-    #{options.horizontalPosition} margin
-
-// styles
-// --------------------------------------------------
-.container
-    width: @widgetWidth
-    height: @infoHeight
-    text-align: left
+  #container				// Settings for widget container
+    text-align: widget-align
     position: relative
     clear: both
-    color #fff
-    background rgba(#000, .15)
-    padding 10px
-    border-radius 10px
 
-.album-art
-    width: @infoHeight
-    height: @width
-    border-radius @borderRadius
-    background-image: url(now-playing.widget/lib/default.png)
-    background-size: cover
-    float: left
+  #xkcd-title
+    font-size 14px
+    text-transform uppercase
+    font-weight bold
 
-.track-info
-    width: @infoWidth
-    height: @infoHeight
-    margin-left: 10px
-    position: relative
-    float: left
+  #xkcd-alt-text
+      font-size 13px
+  
+  img
+    max-height: 80vh		// allow the img to use up at most 85% of the desktop's height
+    max-width: 50vw		// allow the img to use up at most 50% of the desktop's width
+    // filter: invert(100%)		// uncomment this setting to display an inverted (white on black) comic strip
 
-.artist-name
-    font-weight: bold
-    text-transform: uppercase
-    margin-top: 3px
-    margin-bottom: 5px
-    overflow: hidden
-    white-space: nowrap
-    text-overflow: ellipsis
-    float: left
-    width: 185px
-
-.song-year
-    font-weight: bold
-    text-transform: uppercase
-    margin-top: 3px
-    margin-bottom: 5px
-    text-align: right
-    overflow: hidden
-    white-space: nowrap
-    text-overflow: ellipsis
-    float: right
-    width: 28px
-
-.is-loved
-    display: none
-    font-weight: bold
-    text-transform: uppercase
-    margin-top: 3px
-    margin-left: 5px
-    overflow: hidden
-    white-space: nowrap
-    text-overflow: ellipsis
-    width: 10px
-
-.song-name
-    font-size: 14px
-    text-transform: uppercase
-    margin-bottom: 5px
-    overflow: hidden
-    white-space: nowrap
-    text-overflow: ellipsis
-    float: left
-    width: 218px
-
-.album-name
-    font-weight: bold
-    text-transform: uppercase
-    margin-right: 5px
-    overflow: hidden
-    white-space: nowrap
-    text-overflow: ellipsis
-    float: left
-    width: 218px
-
-.bar-container
-    width: 100%
-    height: @borderRadius
-    border-radius: @borderRadius
-    background: rgba(#fff, .5)
-    position: absolute
-    bottom: 4px
-
-.bar
-    height: @borderRadius
-    border-radius: @borderRadius
-    transition: width .2s ease-in-out
-
-.bar-progress
-    background: rgba(#fff, .85)
 """
-
-options : options
-
-render: () -> """
-<div class="container">
-    <div class="album-art"><div class="is-loved">&hearts;</div></div>
-    <div class="track-info">
-        <div class="artist-name"></div><div class="song-year"></div>
-        <div class="song-name"></div>
-        <div class="album-name"></div>
-        <div class="bar-container">
-            <div class="bar bar-progress"></div>
-        </div>
-        <div class="console"></div>
-    </div>
-</div>
+# Render the output.
+render: (output) -> """
+  <div id='container'>
+  <div>
 """
-
-# Update the rendered output.
-update: (output, domEl) ->
-
-  div = $(domEl)
-
-  # if widget enabled
-  if @options.widgetEnable
-
-    # if not output then hide the widget
-    if !output
-      div.animate({opacity: 0}, 250, 'swing').hide(1)
-
-    # if output then show
-    else
-      console.log output
-
-      # gather script values
-      values = output.slice(0,-1).split(" @ ")
-      div.find('.artist-name').html(values[0])
-      div.find('.song-name').html(values[1])
-      div.find('.album-name').html(values[2])
-      div.find('.song-year').html(values[3])
-      songDuration = values[4]
-      currentPosition = values[5]
-      coverURL = values[6]
-      songChanged = values[7]
-      isLoved = values[8]
-
-      # set progress bar width
-      barWidth = 218
-      # figure out current position
-      songProgress = (currentPosition / songDuration) * barWidth
-      # set progress bar width
-      div.find('.bar-progress').css width: songProgress
-
-      # get current cover art
-      currentCoverURL = "/" + div.find('.album-art').css('background-image').split('/').slice(-3).join().replace(/\,/g, '/').slice(0,-1)
-
-      # if the art changed then update it
-      if currentCoverURL isnt coverURL and coverURL isnt 'NA' and coverURL isnt ''
-        artwork = div.find('.album-art')
-        artwork.css('background-image', 'url('+coverURL+')')
-
-      # if no cover art then show default image
-      # else if coverURL is 'NA'
-      else
-        artwork = div.find('.album-art')
-        artwork.css('background-image', 'url(now-playing.widget/lib/default.png)')
-
-      # if song isLoved then show heart
-      if isLoved == 'true'
-        div.find('.is-loved').css('display', 'block')
-      # else hide heart
-      else
-        div.find('.is-loved').css('display', 'none')
-
-      # show the widget
-      div.show(1).animate({opacity: 1}, 250, 'swing')
-
-  # hide widget if disabled
-  else
-    div.hide()
+	  
+update: (output, domEl) -> 
+  try
+    xkcd = JSON.parse(output)
+    container = $(domEl).find('#container')
+    content = 
+      """
+	  <div id="xkcd-title">#{xkcd.title}</div>
+	  <p style="width: 300px" id="xkcd-alt-text">#{xkcd.alt}</p>
+           <script>
+		   var comic = document.createElement("img");
+		   document.getElementById("xkcd-alt-text").prepend(document.createElement("br"));
+		   document.getElementById("xkcd-alt-text").prepend(document.createElement("br"));
+		   document.getElementById("xkcd-alt-text").prepend(comic);
+		   comic.onload = function() {
+		   document.getElementById("xkcd-alt-text").style.width = comic.clientWidth + "px";
+		   }
+		   comic.src = "#{xkcd.img}";
+	  </script>
+      """
+    $(container).html content
+  catch e
+    # do nothing
